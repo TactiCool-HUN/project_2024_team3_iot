@@ -1,3 +1,5 @@
 /.idea
 /venv
 /sensitive_data
+/functions/cache
+/functions/save
