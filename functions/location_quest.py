@@ -4,6 +4,9 @@ import osmnx as ox
 import matplotlib.pyplot as plt
 FILEPATH = "./save/"
 
+# just in case I need it in the future:
+# https://stackoverflow.com/questions/46238813/osmnx-get-coordinates-of-nodes-using-osm-id
+
 
 def request_graph(
 	address: str = "Hallituskatu 1A, 96100 Rovaniemi",
