@@ -1,8 +1,9 @@
 from math import sin, cos, sqrt, atan2, radians
+import utm
 
 
 class Coord:
-	def __init__(self, latitude: float, longitude: float, in_rad: bool = False):
+	def __init__(self, latitude: float, longitude: float, in_rad: bool = True):
 		if in_rad:
 			self.latitude = latitude
 			self.longitude = longitude
@@ -14,7 +15,8 @@ class Coord:
 		if isinstance(other, Coord):
 			return Coord(
 				self.latitude + other.latitude,
-				self.longitude + other.longitude
+				self.longitude + other.longitude,
+				in_rad = True
 			)
 
 		raise TypeError(f"Coord class cannot be added to {type(other)}")
@@ -29,8 +31,27 @@ class Coord:
 
 		raise TypeError(f"Coord class cannot be subtracted from {type(other)}")
 
+	def __bool__(self):
+		return self.longitude != 0 and self.latitude != 0
+
+	def __eq__(self, other):
+		if isinstance(other, Coord):
+			return self.latitude == other.latitude and self.longitude == other.longitude
+
+		raise TypeError(f"Coord class cannot be subtracted from {type(other)}")
+
 	def __str__(self):
 		return f"({self.latitude}, {self.longitude})"
+
+	def map_to_graph(self, ax, c: str = "red") -> None:
+		"""
+		Places coordinates onto a graph.
+		@param ax: Axis gotten from an active matplotlib plot.
+		@param c: Color of the coordinate point.
+		@return:
+		"""
+		x, y, _, _ = utm.from_latlon(self.latitude, self.longitude)
+		ax.scatter(x, y, c = c)
 
 
 def distance(point_1, point_2) -> float:
