@@ -132,9 +132,9 @@ def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wante
 	return t.Coord.from_node(graph.nodes[quest_node_id], "red")
 
 
-def main(distance_wanted):
+def multi_checker(distance_wanted):
 	graph = get_graph()
-	start = t.Coord(66.49657, 25.7277, "green")
+	start = t.Coord(66.48208302041893, 25.722161963591045, "green")
 	coordinates = [start]
 	for _ in range(500):
 		coordinates.append(get_quest_point(graph, start, distance_wanted))
@@ -142,4 +142,4 @@ def main(distance_wanted):
 	show_graph(graph, coordinates)
 
 
-main(1200)
+multi_checker(1200)
