@@ -1,7 +1,12 @@
+from numpy.ma.core import append
+from shapely.measurement import distance
+
 from utils import tools as t
 import networkx as nx
 import osmnx as ox
 import matplotlib.pyplot as plt
+import random as r
+
 FILEPATH = "./save/"
 
 # just in case I need it in the future:
@@ -68,11 +73,12 @@ def get_graph(
 	return graph
 
 
-def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None) -> None:
+def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None, snap: int = -1) -> None:
 	"""
 	Displays graph, optionally with coordinate(s) marked.
 	@param graph:
-	@param coords:
+	@param coords: list of coordinates to display on the map (optional)
+	@param snap: should coordinates snap to the closest reachable point
 	@return:
 	"""
 	fig, ax = ox.plot_graph(graph, show = False, close = False)
@@ -82,5 +88,58 @@ def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None) -> None:
 	plt.show()
 
 
-coordinates = t.Coord(66.49657, 25.7277)
-show_graph(get_graph(), [coordinates])
+def _quest_recursive(graph: nx.MultiDiGraph, start: int, current: int, visited: list[int], distance_inc: int | float, distance_wanted: int | float) -> tuple[int, bool]:
+	distance_left = distance_inc - t.distance(t.Coord.from_node(graph.nodes[current]), t.Coord.from_node(graph.nodes[visited[-1]]))
+	# print(f"{current}: {distance_inc} -> {distance_left}")
+	air_distance = t.distance(t.Coord.from_node(graph.nodes[start]), t.Coord.from_node(graph.nodes[current]))
+	if distance_left < 0 and air_distance > distance_wanted * 0.8:
+		return current, True
+	elif air_distance > distance_wanted * 1.2:
+		return -1, False
+
+	visited.append(current)
+
+	neighbours = list(iter(graph[current]))
+	r.shuffle(neighbours)
+
+	for node_id in neighbours:
+		if node_id in visited:
+			continue
+
+		current_new, final = _quest_recursive(graph, start, node_id, visited, distance_left, distance_wanted)
+		if final:
+			return current_new, final
+
+	return -1, False
+
+
+def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wanted: int) -> t.Coord:
+	"""
+
+	@param graph:
+	@param current_pos: starting position's coordinates
+	@param distance_wanted: in meters
+	@return:
+	"""
+	as_utm = current_pos.as_utm()
+	node, dist = ox.nearest_nodes(graph, as_utm[0], as_utm[1], return_dist = True)
+	node: int
+	dist: float
+	distance_left: float = distance_wanted - dist
+	visited: list[int] = [node]
+
+	quest_node_id, _ = _quest_recursive(graph, node, node, visited, distance_left, distance_wanted)
+	return t.Coord.from_node(graph.nodes[quest_node_id], "red")
+
+
+def main(distance_wanted):
+	graph = get_graph()
+	start = t.Coord(66.49657, 25.7277, "green")
+	coordinates = [start]
+	for _ in range(500):
+		coordinates.append(get_quest_point(graph, start, distance_wanted))
+
+	show_graph(graph, coordinates)
+
+
+main(1200)
