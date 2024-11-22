@@ -1,4 +1,4 @@
-from math import sin, cos, sqrt, atan2, radians
+from math import sqrt, radians
 import utm
 UTM_REGION = 35
 

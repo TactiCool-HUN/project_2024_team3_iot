@@ -1,6 +1,3 @@
-from numpy.ma.core import append
-from shapely.measurement import distance
-
 from utils import tools as t
 import networkx as nx
 import osmnx as ox
@@ -13,21 +10,22 @@ FILEPATH = "./save/"
 # https://stackoverflow.com/questions/46238813/osmnx-get-coordinates-of-nodes-using-osm-id
 
 
+# noinspection SpellCheckingInspection
 def request_graph(
 	address: str = "Hallituskatu 1A, 96100 Rovaniemi",
-	distance: int = 5000,
+	distance_covered: int = 5000,
 	save: bool = True,
 	save_name: str = "rovaniemi"
 ) -> nx.MultiDiGraph:
 	"""
 	Requests a graph from the API handler, also automatically saves it.
 	@param address: custom center position
-	@param distance: distance from center position, recommended 4000 - 10_000
+	@param distance_covered: distance from center position, recommended 4000 - 10_000
 	@param save: should the graph be saved?
 	@param save_name: what name should the graph be saved at? (automatically overwrites existing files)
 	@return:
 	"""
-	multi_graph = ox.graph_from_address(address, dist=distance, network_type="walk")
+	multi_graph = ox.graph_from_address(address, dist = distance_covered, network_type = "walk")
 	if save:
 		ox.save_graphml(multi_graph, f"{FILEPATH}{save_name}.graphml")
 	return multi_graph
@@ -47,10 +45,11 @@ def load_graph(graph_name: str = "rovaniemi") -> nx.MultiDiGraph:
 
 	# basically simplifies the graph somewhat
 	graph_proj = ox.project_graph(graph)
-	graph = ox.consolidate_intersections(graph_proj, rebuild_graph=True, tolerance=15, dead_ends=False)
+	graph = ox.consolidate_intersections(graph_proj, rebuild_graph = True, tolerance = 15, dead_ends = False)
 	return graph
 
 
+# noinspection SpellCheckingInspection
 def get_graph(
 	graph_name: str = "rovaniemi",
 	address: str = "Hallituskatu 1A, 96100 Rovaniemi",
@@ -73,12 +72,11 @@ def get_graph(
 	return graph
 
 
-def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None, snap: int = -1) -> None:
+def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None) -> None:
 	"""
 	Displays graph, optionally with coordinate(s) marked.
 	@param graph:
 	@param coords: list of coordinates to display on the map (optional)
-	@param snap: should coordinates snap to the closest reachable point
 	@return:
 	"""
 	fig, ax = ox.plot_graph(graph, show = False, close = False)
@@ -115,7 +113,7 @@ def _quest_recursive(graph: nx.MultiDiGraph, start: int, current: int, visited: 
 
 def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wanted: int) -> t.Coord:
 	"""
-
+	# TODO: write description
 	@param graph:
 	@param current_pos: starting position's coordinates
 	@param distance_wanted: in meters
