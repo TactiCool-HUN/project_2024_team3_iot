@@ -1,13 +1,12 @@
 from utils import tools as t
+from activity_saver import DatabaseConnection
 import networkx as nx
 import osmnx as ox
 import matplotlib.pyplot as plt
 import random as r
+import settings as s
 
 FILEPATH = "./save/"
-
-# just in case I need it in the future:
-# https://stackoverflow.com/questions/46238813/osmnx-get-coordinates-of-nodes-using-osm-id
 
 
 # noinspection SpellCheckingInspection
@@ -88,7 +87,6 @@ def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None) -> None:
 
 def _quest_recursive(graph: nx.MultiDiGraph, start: int, current: int, visited: list[int], distance_inc: int | float, distance_wanted: int | float) -> tuple[int, bool]:
 	distance_left = distance_inc - t.distance(t.Coord.from_node(graph.nodes[current]), t.Coord.from_node(graph.nodes[visited[-1]]))
-	# print(f"{current}: {distance_inc} -> {distance_left}")
 	air_distance = t.distance(t.Coord.from_node(graph.nodes[start]), t.Coord.from_node(graph.nodes[current]))
 	if distance_left < 0 and air_distance > distance_wanted * 0.8:
 		return current, True
@@ -113,7 +111,7 @@ def _quest_recursive(graph: nx.MultiDiGraph, start: int, current: int, visited: 
 
 def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wanted: int) -> t.Coord:
 	"""
-	# TODO: write description
+	Get a random point on the graph that is within the set distance of start.
 	@param graph:
 	@param current_pos: starting position's coordinates
 	@param distance_wanted: in meters
@@ -130,14 +128,41 @@ def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wante
 	return t.Coord.from_node(graph.nodes[quest_node_id], "red")
 
 
-def multi_checker(distance_wanted):
+def request_quest():
+	goal = t.get_setting('daily_goal_steps')
+	current = t.get_current_distance()
+	remaining = goal - current
+	if remaining < 0:
+		return None
+
+	start_time = t.get_setting('earliest_walk')
+	end_time = t.get_setting('latest_walk')
+	# converting to minutes
+	start_time = int(str(start_time)[:-2]) * 60 + int(str(start_time)[-2:])
+	end_time = int(str(end_time)[:-2]) * 60 + int(str(end_time)[-2:])
+	current_time = t.datetime.now().hour * 60 + t.datetime.now().minute
+	day_elapsed = (current_time - start_time) / (end_time - start_time)
+
+	expected_point = goal * day_elapsed
+	behind_by = expected_point - remaining
+	if behind_by > 0:
+		pass
+		# TODO: calculate how to catch up / surpass
+	else:
+		pass
+		# TODO: give some standard minor quest
+
+
+def tester():
 	graph = get_graph()
-	start = t.Coord(66.48208302041893, 25.722161963591045, "green")
-	coordinates = [start]
+	coordinates = []
 	for _ in range(500):
+		start = t.Coord(47 + r.randint(0, 10000) / 10000, 17 + r.randint(0, 10000) / 10000, "green")
+		coordinates = [start]
+		distance_wanted = r.randint(50, 4000)
 		coordinates.append(get_quest_point(graph, start, distance_wanted))
 
-	show_graph(graph, coordinates)
+	# show_graph(graph, coordinates)
 
 
-multi_checker(1200)
+tester()

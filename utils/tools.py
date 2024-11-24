@@ -1,4 +1,7 @@
 from math import sqrt, radians
+from datetime import datetime
+from functions.activity_saver import DatabaseConnection
+from functions.settings import get_setting
 import utm
 UTM_REGION = 35
 
@@ -77,3 +80,44 @@ def distance(point_1: Coord, point_2: Coord) -> float:
 	dy = y2 - y1
 
 	return sqrt(dx ** 2 + dy ** 2)
+
+
+def get_current_distance(goal_unit: str = 'meters') -> float:
+	now = datetime.now()
+	with DatabaseConnection('') as con:
+		cursor = con.cursor()
+		cursor.execute(
+			'SELECT distance '
+			'FROM quests '
+			'WHERE completed = 1 '
+			'AND date = ?',
+			(
+				int(f'{now.year}{now.month}{now.day}')
+			)
+		)
+		raw_quests = cursor.fetchall()
+
+	quest_distance = sum([x[0] for x in raw_quests])
+
+	with DatabaseConnection('') as con:
+		cursor = con.cursor()
+		cursor.execute(
+			'SELECT distance FROM passive_movement '
+			'WHERE date = ?',
+			(
+				int(f'{now.year}{now.month}{now.day}')
+			)
+		)
+		raw_passive = cursor.fetchall()
+
+	passive_distance = sum([x[0] for x in raw_passive])
+	full = quest_distance + passive_distance
+
+	match goal_unit:
+		case 'steps':
+			return full * 1.4
+		case 'meters':
+			return full
+
+
+pass
