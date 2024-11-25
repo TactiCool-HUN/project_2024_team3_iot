@@ -4,6 +4,7 @@ from functions.activity_saver import DatabaseConnection
 from functions.settings import get_setting
 import utm
 UTM_REGION = 35
+STEPS_TO_METERS = 0.75
 
 
 class Coord:
@@ -84,7 +85,7 @@ def distance(point_1: Coord, point_2: Coord) -> float:
 
 def get_current_distance(goal_unit: str = 'meters') -> float:
 	now = datetime.now()
-	with DatabaseConnection('') as con:
+	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
 			'SELECT distance '
@@ -99,7 +100,7 @@ def get_current_distance(goal_unit: str = 'meters') -> float:
 
 	quest_distance = sum([x[0] for x in raw_quests])
 
-	with DatabaseConnection('') as con:
+	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
 			'SELECT distance FROM passive_movement '
@@ -118,6 +119,24 @@ def get_current_distance(goal_unit: str = 'meters') -> float:
 			return full * 1.4
 		case 'meters':
 			return full
+
+
+def get_last_coordinates() -> Coord:
+	with DatabaseConnection('main') as con:
+		cursor = con.cursor()
+		cursor.execute(
+			'SELECT MAX(id) FROM passive_movement '
+			'WHERE latitude IS NOT NULL AND longitude IS NOT NULL'
+		)
+		int_id = cursor.fetchall()[0]
+		cursor.execute(
+			'SELECT latitude, longitude FROM passive_movement '
+			'WHERE id = ?',
+			int_id
+		)
+		raw = cursor.fetchall()[0]
+
+	return Coord(raw[0], raw[1])
 
 
 pass

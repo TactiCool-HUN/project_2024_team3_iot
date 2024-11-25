@@ -1,13 +1,11 @@
 import os
-from multiprocessing.managers import Value
-
-from numpy.distutils.system_info import NotFoundError
 
 FILEPATH = './save/settings.txt'
 DEFAULT = \
 	"""daily_goal_steps = 8750
 earliest_walk = 0800
-latest_walk = 2000"""
+latest_walk = 2000
+purge_database = 1"""
 
 
 def _assure_settings_file():
@@ -37,6 +35,7 @@ def _verify_settings_file(crashing: bool = True) -> bool:
 		'daily_goal_steps',
 		'earliest_walk',
 		'latest_walk',
+		'purge_database',
 	]
 
 	with open(FILEPATH, 'r') as f:
@@ -74,6 +73,10 @@ def get_setting(setting_name: str) -> str | float:
 
 	_verify_settings_file()
 	raise ValueError(f'Setting name > {setting_name} < is not recognized.')
+
+
+def set_setting(setting_name: str, set_to: str) -> None:
+	pass  # TODO
 
 
 _assure_settings_file()

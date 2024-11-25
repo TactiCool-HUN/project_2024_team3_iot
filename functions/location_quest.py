@@ -1,10 +1,8 @@
 from utils import tools as t
-from activity_saver import DatabaseConnection
 import networkx as nx
 import osmnx as ox
 import matplotlib.pyplot as plt
 import random as r
-import settings as s
 
 FILEPATH = "./save/"
 
@@ -129,7 +127,7 @@ def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wante
 
 
 def request_quest():
-	goal = t.get_setting('daily_goal_steps')
+	goal = t.get_setting('daily_goal_steps') * t.STEPS_TO_METERS
 	current = t.get_current_distance()
 	remaining = goal - current
 	if remaining < 0:
@@ -145,12 +143,16 @@ def request_quest():
 
 	expected_point = goal * day_elapsed
 	behind_by = expected_point - remaining
+	current_pos: t.Coord = t.get_last_coordinates()
 	if behind_by > 0:
-		pass
-		# TODO: calculate how to catch up / surpass
+		to_walk: int = round(behind_by * r.randint(10, 12) / 10)
 	else:
-		pass
-		# TODO: give some standard minor quest
+		to_walk: int = 200
+
+	graph = get_graph()
+	quest_point: t.Coord = get_quest_point(graph, current_pos, to_walk)
+
+
 
 
 def tester():
@@ -165,4 +167,4 @@ def tester():
 	# show_graph(graph, coordinates)
 
 
-tester()
+# tester()

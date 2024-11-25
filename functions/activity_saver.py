@@ -19,7 +19,7 @@ class DatabaseConnection:
 
 
 def assure_database():
-	with DatabaseConnection('activities') as con:
+	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
 			'CREATE TABLE IF NOT EXISTS quests('
@@ -40,9 +40,59 @@ def assure_database():
 			'id INTEGER,'
 			'date INTEGER NOT NULL,'
 			'distance INTEGER NOT NULL,'
+			'latitude REAL,'
+			'longitude REAL,'
 			'PRIMARY KEY(id)'
 			')'
 		)
 
 
+def make_totally_real_data_tm():
+	with DatabaseConnection('main') as con:
+		cursor = con.cursor()
+		cursor.execute(
+			'INSERT INTO passive_movement('
+			'date,'
+			'distance,'
+			'latitude,'
+			'longitude) '
+			'VALUES (?, ?, ?, ?)',
+			(
+				20241124,
+				100,
+				20,
+				25
+			)
+		)
+		cursor.execute(
+			'INSERT INTO passive_movement('
+			'date,'
+			'distance,'
+			'latitude,'
+			'longitude) '
+			'VALUES (?, ?, ?, ?)',
+			(
+				20241124,
+				150,
+				30,
+				35
+			)
+		)
+		cursor.execute(
+			'INSERT INTO passive_movement('
+			'date,'
+			'distance,'
+			'latitude,'
+			'longitude) '
+			'VALUES (?, ?, ?, ?)',
+			(
+				20241124,
+				125,
+				None,
+				None
+			)
+		)
+
+
 assure_database()
+# make_totally_real_data_tm()
