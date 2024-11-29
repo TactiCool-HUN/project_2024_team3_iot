@@ -1,5 +1,6 @@
 import functions.activity_saver as a_s
 import utils.tools as t
+import functions.settings as s
 
 
 def main():
