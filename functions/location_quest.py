@@ -4,7 +4,7 @@ import osmnx as ox
 import matplotlib.pyplot as plt
 import random as r
 
-FILEPATH = "./save/"
+FILEPATH = "./functions/save/"
 
 
 # noinspection SpellCheckingInspection
