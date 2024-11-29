@@ -1,13 +1,15 @@
+import os
 import sqlite3
+from settings import get_setting, set_setting
 
 
 class DatabaseConnection:
 	def __init__(self, host):
 		self.connection = None
 		if host[-3:] == ".db":
-			self.host = f"save/{host}"
+			self.host = f"functions/save/{host}"
 		else:
-			self.host = f"save/{host}.db"
+			self.host = f"functions/save/{host}.db"
 
 	def __enter__(self):
 		self.connection = sqlite3.connect(self.host)
@@ -16,6 +18,18 @@ class DatabaseConnection:
 	def __exit__(self, exc_type, exc_val, exc_tb):
 		self.connection.commit()
 		self.connection.close()
+
+
+def destroy_database():
+	os.remove('functions/save/main.db')
+
+
+def soft_purge():
+	with DatabaseConnection('main') as con:
+		cursor = con.cursor()
+		cursor.execute(
+			'DROP TABLE IF EXISTS raw_sensor_data'
+		)
 
 
 def assure_database():
@@ -42,6 +56,20 @@ def assure_database():
 			'distance INTEGER NOT NULL,'
 			'latitude REAL,'
 			'longitude REAL,'
+			'PRIMARY KEY(id)'
+			')'
+		)
+
+		cursor.execute(
+			'CREATE TABLE IF NOT EXISTS raw_sensor_data('
+			'id INTEGER,'
+			'date INTEGER NOT NULL,'
+			'latitude REAL,'
+			'longitude REAL,'
+			'acc_x REAL,'
+			'acc_y REAL,'
+			'acc_z REAL,'
+			'processed INTEGER DEFAULT 0,'
 			'PRIMARY KEY(id)'
 			')'
 		)
@@ -93,6 +121,14 @@ def make_totally_real_data_tm():
 			)
 		)
 
+
+if int(get_setting('hard_purge_database')) == 1:
+	destroy_database()
+	set_setting('hard_purge_database', 0)
+
+if int(get_setting('soft_purge_database')) == 1:
+	soft_purge()
+	set_setting('soft_purge_database', 0)
 
 assure_database()
 # make_totally_real_data_tm()

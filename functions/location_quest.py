@@ -126,45 +126,16 @@ def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wante
 	return t.Coord.from_node(graph.nodes[quest_node_id], "red")
 
 
-def request_quest():
-	goal = t.get_setting('daily_goal_steps') * t.STEPS_TO_METERS
-	current = t.get_current_distance()
-	remaining = goal - current
-	if remaining < 0:
-		return None
-
-	start_time = t.get_setting('earliest_walk')
-	end_time = t.get_setting('latest_walk')
-	# converting to minutes
-	start_time = int(str(start_time)[:-2]) * 60 + int(str(start_time)[-2:])
-	end_time = int(str(end_time)[:-2]) * 60 + int(str(end_time)[-2:])
-	current_time = t.datetime.now().hour * 60 + t.datetime.now().minute
-	day_elapsed = (current_time - start_time) / (end_time - start_time)
-
-	expected_point = goal * day_elapsed
-	behind_by = expected_point - remaining
-	current_pos: t.Coord = t.get_last_coordinates()
-	if behind_by > 0:
-		to_walk: int = round(behind_by * r.randint(10, 12) / 10)
-	else:
-		to_walk: int = 200
-
-	graph = get_graph()
-	quest_point: t.Coord = get_quest_point(graph, current_pos, to_walk)
-
-
-
-
 def tester():
 	graph = get_graph()
 	coordinates = []
-	for _ in range(500):
-		start = t.Coord(47 + r.randint(0, 10000) / 10000, 17 + r.randint(0, 10000) / 10000, "green")
+	for _ in range(1):
+		start = t.Coord(66.48839567813025, 25.704701423020914, "green")
 		coordinates = [start]
-		distance_wanted = r.randint(50, 4000)
+		distance_wanted = 500
 		coordinates.append(get_quest_point(graph, start, distance_wanted))
 
-	# show_graph(graph, coordinates)
+	show_graph(graph, coordinates)
 
 
-# tester()
+tester()
