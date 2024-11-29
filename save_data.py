@@ -1,9 +1,9 @@
-from functions.activity_saver import DatabaseConnection
+import functions.activity_saver as a_s
 import utils.tools as t
 
 
 def main():
-	with DatabaseConnection('main') as con:
+	with a_s.DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
 			'SELECT id, date, latitude, longitude, acc_x, acc_y, acc_z FROM raw_sensor_data WHERE processed = 0'
@@ -24,7 +24,7 @@ def main():
 			current_coords = t.Coord(latitude, longitude)
 			distance = t.distance(last_coords, current_coords)
 
-			with DatabaseConnection('main') as con:
+			with a_s.DatabaseConnection('main') as con:
 				cursor = con.cursor()
 				cursor.execute(
 					'INSERT INTO passive_movements('
@@ -42,7 +42,7 @@ def main():
 				)
 		else:
 			distance = 10  # TODO: magic
-			with DatabaseConnection('main') as con:
+			with a_s.DatabaseConnection('main') as con:
 				cursor = con.cursor()
 				cursor.execute(
 					'INSERT INTO passive_movements('
@@ -55,7 +55,7 @@ def main():
 					)
 				)
 
-		with DatabaseConnection('main') as con:
+		with a_s.DatabaseConnection('main') as con:
 			cursor = con.cursor()
 			cursor.execute(
 				'UPDATE raw_sensor_data '

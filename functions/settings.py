@@ -1,12 +1,13 @@
 import os
 
-FILEPATH = './save/settings.txt'
+FILEPATH = './functions/save/settings.txt'
 DEFAULT = \
 	"""daily_goal_steps = 8750
 earliest_walk = 0800
 latest_walk = 2000
 hard_purge_database = 1
-soft_purge_database = 0"""
+soft_purge_database = 0
+"""
 
 
 def _assure_settings_file():
@@ -84,7 +85,7 @@ def set_setting(setting_name: str, set_to) -> None:
 	for i, line in enumerate(lines):
 		name, _ = line.split(' = ')
 		if name == setting_name:
-			lines[i] = f'{name} = {set_to}'
+			lines[i] = f'{name} = {set_to}\n'
 			with open(FILEPATH, 'w') as f:
 				f.writelines(lines)
 			return

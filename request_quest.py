@@ -31,6 +31,8 @@ def main():
 	graph = q.get_graph()
 	quest_point: t.Coord = q.get_quest_point(graph, current_pos, to_walk)
 
+	q.save_graph(graph, 'current_quest', [current_pos, quest_point])
+
 
 if __name__ == '__main__':
 	main()

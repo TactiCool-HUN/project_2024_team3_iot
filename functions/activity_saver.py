@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from settings import get_setting, set_setting
+from functions.settings import get_setting, set_setting
 
 
 class DatabaseConnection:
@@ -21,7 +21,10 @@ class DatabaseConnection:
 
 
 def destroy_database():
-	os.remove('functions/save/main.db')
+	try:
+		os.remove('functions/save/main.db')
+	except FileNotFoundError:
+		return
 
 
 def soft_purge():
@@ -43,7 +46,7 @@ def assure_database():
 			'target_latitude REAL NOT NULL,'
 			'target_longitude REAL NOT NULL,'
 			'distance INTEGER NOT NULL,'  # in meters
-			'accuracy INTEGER NOT NULL,'  # in meters
+			'accuracy INTEGER,'  # in meters
 			'completed INTEGER NOT NULL,'  # 1 / 0 for yes / no
 			'PRIMARY KEY(id)'
 			')'
@@ -122,13 +125,16 @@ def make_totally_real_data_tm():
 		)
 
 
+print('check: hard_purge')
 if int(get_setting('hard_purge_database')) == 1:
 	destroy_database()
 	set_setting('hard_purge_database', 0)
 
+print('check: soft_purge')
 if int(get_setting('soft_purge_database')) == 1:
 	soft_purge()
 	set_setting('soft_purge_database', 0)
 
+print('assure database')
 assure_database()
 # make_totally_real_data_tm()

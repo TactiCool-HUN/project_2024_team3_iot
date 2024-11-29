@@ -69,6 +69,15 @@ def get_graph(
 	return graph
 
 
+def save_graph(graph: nx.MultiDiGraph, filename: str, coords: list[t.Coord] = None) -> None:
+	fig, ax = ox.plot_graph(graph, show = False, close = False)
+	if coords:
+		for coord in coords:
+			coord.map_to_graph(ax)
+
+	plt.savefig(f'./functions/save/{filename}.png', bbox_inches = 'tight')
+
+
 def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None) -> None:
 	"""
 	Displays graph, optionally with coordinate(s) marked.
@@ -84,7 +93,7 @@ def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None) -> None:
 
 
 def _quest_recursive(graph: nx.MultiDiGraph, start: int, current: int, visited: list[int], distance_inc: int | float, distance_wanted: int | float) -> tuple[int, bool]:
-	distance_left = distance_inc - t.distance(t.Coord.from_node(graph.nodes[current]), t.Coord.from_node(graph.nodes[visited[-1]]))
+	distance_left = distance_inc - t.distance(t.Coord.from_node(graph.nodes[current], convert_from = 'utm'), t.Coord.from_node(graph.nodes[visited[-1]], 'utm'))
 	air_distance = t.distance(t.Coord.from_node(graph.nodes[start]), t.Coord.from_node(graph.nodes[current]))
 	if distance_left < 0 and air_distance > distance_wanted * 0.8:
 		return current, True

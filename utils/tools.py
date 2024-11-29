@@ -56,10 +56,11 @@ class Coord:
 		return f"({self.latitude}, {self.longitude})"
 
 	@staticmethod
-	def from_node(node, colour: str = None):
-		return Coord(node['x'], node['y'], colour, "utm")
+	def from_node(node, convert_from: str = 'utm', colour: str = None):
+		return Coord(node['x'], node['y'], colour, convert_from)
 
 	def as_utm(self):
+		print(self)
 		return utm.from_latlon(self.latitude, self.longitude)
 
 	def map_to_graph(self, ax) -> None:
@@ -103,6 +104,20 @@ def get_current_distance(goal_unit: str = 'meters') -> float:
 			return current_distance * 1.4
 		case 'meters':
 			return current_distance
+
+
+def get_current_quest_coordinates() -> Coord | bool:
+	with DatabaseConnection('main') as con:
+		cursor = con.cursor()
+		cursor.execute(
+			'SELECT * FROM quests WHERE completed = 0'
+		)
+		raw = cursor.fetchall()
+
+	if len(raw) == 1:
+		return Coord(raw[0][3], raw[0][4])
+	else:
+		return False
 
 
 def get_last_coordinates() -> Coord:
