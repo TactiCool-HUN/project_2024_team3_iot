@@ -42,7 +42,7 @@ def main():
 					)
 				)
 		else:
-			distance = 10  # TODO: magic
+			distance = 1  # TODO: magic
 			with a_s.DatabaseConnection('main') as con:
 				cursor = con.cursor()
 				cursor.execute(
