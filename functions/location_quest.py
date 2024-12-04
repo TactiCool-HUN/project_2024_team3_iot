@@ -135,10 +135,10 @@ def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wante
 	return t.Coord.from_node(graph.nodes[quest_node_id], "red")
 
 
-def tester():
+def tester(n: int = 1):
 	graph = get_graph()
 	coordinates = []
-	for _ in range(1):
+	for _ in range(n):
 		start = t.Coord(66.48839567813025, 25.704701423020914, "green")
 		coordinates = [start]
 		distance_wanted = 500

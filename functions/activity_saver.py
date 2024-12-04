@@ -56,6 +56,7 @@ def assure_database():
 			'CREATE TABLE IF NOT EXISTS passive_movement('
 			'id INTEGER,'
 			'date INTEGER NOT NULL,'
+			'time INTEGER NOT NULL,'
 			'distance INTEGER NOT NULL,'
 			'latitude REAL,'
 			'longitude REAL,'
