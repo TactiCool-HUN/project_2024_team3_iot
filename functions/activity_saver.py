@@ -21,6 +21,7 @@ class DatabaseConnection:
 
 
 def destroy_database():
+	print('destroying database')
 	try:
 		os.remove('functions/save/main.db')
 	except FileNotFoundError:
@@ -28,6 +29,7 @@ def destroy_database():
 
 
 def soft_purge():
+	print('destroying raw_sensor_data')
 	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
@@ -36,6 +38,7 @@ def soft_purge():
 
 
 def assure_database():
+	print('assure database')
 	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
@@ -45,7 +48,6 @@ def assure_database():
 			'time INTEGER NOT NULL,'
 			'target_latitude REAL NOT NULL,'
 			'target_longitude REAL NOT NULL,'
-			'distance INTEGER NOT NULL,'  # in meters
 			'accuracy INTEGER,'  # in meters
 			'completed INTEGER NOT NULL,'  # 1 / 0 for yes / no
 			'PRIMARY KEY(id)'
@@ -56,7 +58,6 @@ def assure_database():
 			'CREATE TABLE IF NOT EXISTS passive_movement('
 			'id INTEGER,'
 			'date INTEGER NOT NULL,'
-			'time INTEGER NOT NULL,'
 			'distance INTEGER NOT NULL,'
 			'latitude REAL,'
 			'longitude REAL,'
@@ -68,6 +69,7 @@ def assure_database():
 			'CREATE TABLE IF NOT EXISTS raw_sensor_data('
 			'id INTEGER,'
 			'date INTEGER NOT NULL,'
+			'time INTEGER NOT NULL,'
 			'latitude REAL,'
 			'longitude REAL,'
 			'acc_x REAL,'
@@ -90,10 +92,10 @@ def make_totally_real_data_tm():
 			'longitude) '
 			'VALUES (?, ?, ?, ?)',
 			(
-				20241124,
-				100,
-				20,
-				25
+				20241204,
+				0,
+				66.50552596046084,
+				25.706293978685338,
 			)
 		)
 		cursor.execute(
@@ -104,10 +106,10 @@ def make_totally_real_data_tm():
 			'longitude) '
 			'VALUES (?, ?, ?, ?)',
 			(
-				20241124,
-				150,
-				30,
-				35
+				20241204,
+				135,
+				66.50100494562442,
+				25.702715595702436
 			)
 		)
 		cursor.execute(
@@ -118,10 +120,24 @@ def make_totally_real_data_tm():
 			'longitude) '
 			'VALUES (?, ?, ?, ?)',
 			(
-				20241124,
-				125,
-				None,
-				None
+				20241204,
+				350,
+				66.49557957125226,
+				25.729997797654434
+			)
+		)
+		cursor.execute(
+			'INSERT INTO passive_movement('
+			'date,'
+			'distance,'
+			'latitude,'
+			'longitude) '
+			'VALUES (?, ?, ?, ?)',
+			(
+				20241204,
+				400,
+				66.4809296536252,
+				25.721840601334275
 			)
 		)
 
@@ -136,6 +152,6 @@ if int(get_setting('soft_purge_database')) == 1:
 	soft_purge()
 	set_setting('soft_purge_database', 0)
 
-print('assure database')
+destroy_database()
 assure_database()
-# make_totally_real_data_tm()
+make_totally_real_data_tm()

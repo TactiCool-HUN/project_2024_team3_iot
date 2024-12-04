@@ -60,7 +60,6 @@ class Coord:
 		return Coord(node['x'], node['y'], colour, convert_from)
 
 	def as_utm(self):
-		print(self)
 		return utm.from_latlon(self.latitude, self.longitude)
 
 	def map_to_graph(self, ax) -> None:
@@ -85,6 +84,13 @@ def distance(point_1: Coord, point_2: Coord) -> float:
 
 def get_current_distance(goal_unit: str = 'meters') -> float:
 	now = datetime.now()
+	month = now.month
+	if month < 10:
+		month = f'0{month}'
+	day = now.day
+	if day < 10:
+		day = f'0{day}'
+	now = int(f'{now.year}{month}{day}')
 
 	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
@@ -92,7 +98,7 @@ def get_current_distance(goal_unit: str = 'meters') -> float:
 			'SELECT distance FROM passive_movement '
 			'WHERE date = ?',
 			(
-				int(f'{now.year}{now.month}{now.day}')
+				now,
 			)
 		)
 		raw = cursor.fetchall()

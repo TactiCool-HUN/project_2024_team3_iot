@@ -69,13 +69,16 @@ def get_graph(
 	return graph
 
 
-def save_graph(graph: nx.MultiDiGraph, filename: str, coords: list[t.Coord] = None) -> None:
+def save_graph(graph: nx.MultiDiGraph, filename: str, coords: list[t.Coord] = None, show_after_save: bool = False) -> None:
 	fig, ax = ox.plot_graph(graph, show = False, close = False)
 	if coords:
 		for coord in coords:
 			coord.map_to_graph(ax)
 
 	plt.savefig(f'./functions/save/{filename}.png', bbox_inches = 'tight')
+
+	if show_after_save:
+		plt.show()
 
 
 def show_graph(graph: nx.MultiDiGraph, coords: list[t.Coord] = None) -> None:
@@ -132,7 +135,7 @@ def get_quest_point(graph: nx.MultiDiGraph, current_pos: t.Coord, distance_wante
 	visited: list[int] = [node]
 
 	quest_node_id, _ = _quest_recursive(graph, node, node, visited, distance_left, distance_wanted)
-	return t.Coord.from_node(graph.nodes[quest_node_id], "red")
+	return t.Coord.from_node(graph.nodes[quest_node_id], "utm", "red")
 
 
 def tester(n: int = 1):
@@ -147,4 +150,4 @@ def tester(n: int = 1):
 	show_graph(graph, coordinates)
 
 
-tester()
+# tester()
