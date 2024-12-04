@@ -45,8 +45,6 @@ def main():
 			os.remove('./functions/save/current_quest.png')
 		except FileNotFoundError:
 			pass
-	elif raw[5] is None:
-		print('Quest in progress')
 
 
 if __name__ == '__main__':
