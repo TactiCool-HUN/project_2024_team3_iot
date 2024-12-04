@@ -18,7 +18,6 @@ class DatabaseConnection:
 
 
 def destroy_database():
-	print('destroying database')
 	try:
 		os.remove('functions/save/main.db')
 	except FileNotFoundError:
@@ -26,7 +25,6 @@ def destroy_database():
 
 
 def soft_purge():
-	print('destroying raw_sensor_data')
 	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
@@ -35,7 +33,6 @@ def soft_purge():
 
 
 def assure_database():
-	print('assure database')
 	with DatabaseConnection('main') as con:
 		cursor = con.cursor()
 		cursor.execute(
@@ -139,17 +136,15 @@ def make_totally_real_data_tm():
 		)
 
 
-print('check: hard_purge')
 if int(get_setting('hard_purge_database')) == 1:
 	destroy_database()
 	set_setting('hard_purge_database', 0)
 
-print('check: soft_purge')
 if int(get_setting('soft_purge_database')) == 1:
 	soft_purge()
 	set_setting('soft_purge_database', 0)
 
-reset = True
+reset = False
 
 if reset:
 	destroy_database()

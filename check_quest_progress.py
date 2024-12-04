@@ -12,7 +12,6 @@ def main():
 		return
 
 	accuracy = t.distance(current, quest_location)
-	print(f'accuracy: {accuracy} meters away')
 	if accuracy < 50:
 		print('quest complete noted')
 		with a_s.DatabaseConnection('main') as con:
