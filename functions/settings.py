@@ -1,6 +1,6 @@
 import os
 
-FILEPATH = './functions/save/settings.txt'
+FILEPATH = 'home/IoTTeam3/Code/lies_and_deception/functions/save/settings.txt'
 DEFAULT = \
 	"""daily_goal_steps = 8750
 earliest_walk = 0800
@@ -94,4 +94,4 @@ def set_setting(setting_name: str, set_to) -> None:
 	raise ValueError(f'Setting name > {setting_name} < is not recognized.')
 
 
-# _assure_settings_file()
+_assure_settings_file()
