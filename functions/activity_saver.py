@@ -6,10 +6,7 @@ from functions.settings import get_setting, set_setting
 class DatabaseConnection:
 	def __init__(self, host):
 		self.connection = None
-		if host[-3:] == ".db":
-			self.host = f"functions/save/{host}"
-		else:
-			self.host = f"functions/save/{host}.db"
+		self.host = f"/home/IoTTeam3/Code/lies_and_deception/functions/save/main.db"
 
 	def __enter__(self):
 		self.connection = sqlite3.connect(self.host)
