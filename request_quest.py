@@ -1,5 +1,6 @@
 import utils.tools as t
 import functions.settings as s
+import functions.activity_saver as a_s
 import random as r
 import functions.location_quest as q
 from functions.activity_saver import DatabaseConnection
@@ -72,4 +73,7 @@ def main():
 
 
 if __name__ == '__main__':
+	a_s.destroy_database()
+	a_s.assure_database()
+	a_s.make_totally_real_data_tm()
 	main()
