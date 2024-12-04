@@ -1,6 +1,6 @@
 import os
 
-FILEPATH = './functions/save/settings.txt'
+FILEPATH = '~/Code/lies_and_deception/functions/save/settings.txt'
 DEFAULT = \
 	"""daily_goal_steps = 8750
 earliest_walk = 0800
