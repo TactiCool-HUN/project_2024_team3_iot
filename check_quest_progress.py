@@ -9,11 +9,12 @@ def main():
 	quest_location = t.get_current_quest_coordinates()
 
 	if quest_location is False:
+		print('No quest in progress')
 		return
 
 	accuracy = t.distance(current, quest_location)
 	if accuracy < 50:
-		print('quest complete noted')
+		print('Quest Approached')
 		with a_s.DatabaseConnection('main') as con:
 			cursor = con.cursor()
 			cursor.execute(
@@ -31,7 +32,7 @@ def main():
 		raw = cursor.fetchall()[0]
 
 	if raw[5] is not None and accuracy > 100:
-		print('quest_complete registered')
+		print('Quest Complete')
 		with a_s.DatabaseConnection('main') as con:
 			cursor = con.cursor()
 			cursor.execute(
@@ -44,6 +45,8 @@ def main():
 			os.remove('./functions/save/current_quest.png')
 		except FileNotFoundError:
 			pass
+	elif raw[5] is None:
+		print('Quest in progress')
 
 
 if __name__ == '__main__':
