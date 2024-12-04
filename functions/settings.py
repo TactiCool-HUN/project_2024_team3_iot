@@ -94,4 +94,4 @@ def set_setting(setting_name: str, set_to) -> None:
 	raise ValueError(f'Setting name > {setting_name} < is not recognized.')
 
 
-_assure_settings_file()
+# _assure_settings_file()
