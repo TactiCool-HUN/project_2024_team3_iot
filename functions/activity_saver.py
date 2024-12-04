@@ -152,6 +152,10 @@ if int(get_setting('soft_purge_database')) == 1:
 	soft_purge()
 	set_setting('soft_purge_database', 0)
 
-destroy_database()
+reset = True
+
+if reset:
+	destroy_database()
 assure_database()
-make_totally_real_data_tm()
+if reset:
+	make_totally_real_data_tm()
